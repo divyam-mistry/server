@@ -41,3 +41,33 @@ export const register = async (req, res) => {
         });
     }
 };
+
+export const login = async (req, res) => {
+    try{
+        const { email, password } = req.body;
+        const user = await User.findOne({ email: email});
+        if(!user) {
+            res.status(400).json({
+                msg: "User doesn't exist. Please register first",
+            });
+        }
+
+        const isPasswordSame = await bcrypt.compare(password, user.password);
+        if(!isPasswordSame){
+            res.status(400).json({
+                msg: "Incorrect Password entered.",
+            });
+        }
+
+        // JWT
+        const token = jwt.sign({id: user._id}, process.env.JWT_SECRET);
+        delete user.password; // so that it is not passed on to frontend
+        res.send(200).json({token, user});
+
+    } catch (err) {
+        console.log('Error: ', err);
+        res.status(501).json({
+            error: err.message
+        });
+    }
+};
