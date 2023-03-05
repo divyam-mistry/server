@@ -47,15 +47,15 @@ export const login = async (req, res) => {
         const { email, password } = req.body;
         const user = await User.findOne({ email: email});
         if(!user) {
-            res.status(400).json({
-                msg: "User doesn't exist. Please register first",
+            return res.status(400).json({
+                error: "User doesn't exist. Please register first",
             });
         }
 
         const isPasswordSame = await bcrypt.compare(password, user.password);
         if(!isPasswordSame){
-            res.status(400).json({
-                msg: "Incorrect Password entered.",
+            return res.status(400).json({
+                error: "Incorrect Password entered.",
             });
         }
 
