@@ -16,6 +16,15 @@ export const register = async (req, res) => {
             occupation
         } = req.body; // Object destructuring
         
+        const userAlreadyExist = await User.findOne({
+            email: email,
+        });
+        if(userAlreadyExist){
+            return res.status(501).json({
+                error: 'Email is already in use'
+            });
+        }
+
         const SALT = await bcrypt.genSalt();
         const hashedPassword = await bcrypt.hash(password, SALT);
 
@@ -62,7 +71,7 @@ export const login = async (req, res) => {
         // JWT
         const token = jwt.sign({id: user._id}, process.env.JWT_SECRET);
         delete user.password; // so that it is not passed on to frontend
-        res.send(200).json({token, user});
+        res.status(200).json({token, user});
 
     } catch (err) {
         console.log('Error: ', err);
