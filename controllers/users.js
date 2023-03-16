@@ -60,9 +60,11 @@ export const addRemoveFriend = async (req, res) => {
         // fetch list of updated friends
         const friends = await Promise.all(
             user.friends.map((friend_id) => {
-                User.findById(friend_id)
+                console.log(friend_id);
+                return User.findById(friend_id)
             })
         );
+        if(!friends) return res.status(200).json(friends);
         // format friends
         const formattedFriends = friends.map(
             ({_id, firstName, lastName, occupation, location, picturePath}) => {
