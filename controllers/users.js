@@ -39,6 +39,30 @@ export const getUserFriends = async (req, res) => {
     }
 };
 
+export const searchUsers = async (req, res) => {
+    try {
+        const { query } = req.query;
+        const users = await User.aggregate([
+            {
+                $addFields: {
+                    fullName: { $concat: ["$firstName", " ", "$lastName"] }
+                }
+            },
+            {
+                $match: {
+                    fullName: { $regex: query, $options: "i" }
+                }
+            }
+        ]);
+        res.status(200).json(users);
+    } catch (err) {
+        console.log('Error: ', err);
+        res.status(404).json({
+            error: err.message
+        });
+    }
+};
+
 // UPDATE
 export const addRemoveFriend = async (req, res) => {
     try {
