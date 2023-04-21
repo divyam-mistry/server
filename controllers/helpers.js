@@ -2,13 +2,15 @@ import axios from 'axios';
 
 export const captionSuggestions = async (req, res) => {
     try {
-        const { keywords } = req.body; // [abc, xyz, mno]
+        const keywords = req.body; // [{key:0, label:'abc'}, ...]
         let prompt = process.env.CAPTION_PROMPT;
         for(let keyword of keywords){
-            prompt += keyword + ', ';
+            prompt += keyword.label;
+            if(keyword.key === keywords.length-1) prompt += '.';
+            else prompt += ', ';
         }
-        prompt.length -= 2;
-        prompt += '.';
+        // prompt.length -= 2;
+        // prompt += '.';
         let body_data = {
             model: "text-davinci-003",
             prompt: prompt,
