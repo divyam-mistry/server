@@ -9,23 +9,17 @@ export const captionSuggestions = async (req, res) => {
             if(keyword.key === keywords.length-1) prompt += '.';
             else prompt += ', ';
         }
-        // prompt.length -= 2;
-        // prompt += '.';
         let body_data = {
-            model: "text-davinci-003",
-            prompt: prompt,
-            max_tokens: 7,
-            temperature: 0,
-            top_p: 1,
-            n: 1,
-            stream: false,
-            logprobs: null,
-            stop: "\n"
+            model: "gpt-3.5-turbo",
+            messages: [{
+                role: "user",
+                content: prompt
+            }]
         }
 
         const options = {
             method: 'POST',
-            url: 'https://openai80.p.rapidapi.com/completions',
+            url: 'https://openai80.p.rapidapi.com/chat/completions',
             headers: {
                 'content-type': 'application/json',
                 'X-RapidAPI-Key': process.env.RAPID_API_KEY,
@@ -35,8 +29,9 @@ export const captionSuggestions = async (req, res) => {
         };
 
         axios.request(options).then(function (response) {
-            console.log(response.data);
-            res.status(201).json(response.data);
+            let obj = JSON.parse(response.data.choices[0].message.content);
+            console.log();
+            res.status(201).json(obj);
         }).catch(function (error) {
             console.error(error);
             res.status(404).json({
