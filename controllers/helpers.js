@@ -22,6 +22,7 @@ export const captionSuggestions = async (req, res) => {
             url: 'https://openai80.p.rapidapi.com/chat/completions',
             headers: {
                 'content-type': 'application/json',
+                'Accept-Encoding': 'gzip, deflate',
                 'X-RapidAPI-Key': process.env.RAPID_API_KEY,
                 'X-RapidAPI-Host': 'openai80.p.rapidapi.com'
             },
